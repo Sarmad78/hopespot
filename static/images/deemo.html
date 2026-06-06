@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multiple Form Actions</title>
+</head>
+<body>
+
+<form id="myForm">
+  <!-- Your form fields go here -->
+
+  <button type="button" onclick="submitForm('action1')">Action 1</button>
+  <button type="button" onclick="submitForm('action2')">Action 2</button>
+</form>
+
+<script>
+  function submitForm(action) {
+    var form = document.getElementById('myForm');
+
+    // Perform different actions based on the value of the 'action' parameter
+    if (action === 'action1') {
+      form.action = 'url_for_action1';
+    } else if (action === 'action2') {
+      form.action = 'url_for_action2';
+    }
+
+    // Submit the form
+    form.submit();
+  }
+</script>
+
+</body>
+</html>

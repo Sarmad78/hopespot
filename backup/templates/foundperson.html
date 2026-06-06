@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+    integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+ 
+  <title>Found Person</title>
+</head>
+<style>
+  body {
+    margin: 0%;
+    padding: 0%;
+    box-sizing: border-box;
+    font-family: 'Rubik', sans-serif !important;
+    background-color: #F1F7FE;
+
+  }
+
+  .brand {
+    margin-top: 5%;
+    text-align: center;
+    color: #1e319d;
+
+  }
+  /* Style the side menu */
+.sidenav {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 60px;
+}
+
+/* Style links inside the side menu */
+.sidenav a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+/* Change the color of links on hover */
+.sidenav a:hover {
+  color: #f1f1f1;
+}
+
+/* Position and style the close button (top right corner) */
+.sidenav .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+}
+
+/* Style the close button on hover */
+.sidenav .closebtn:hover {
+  color: #f1f1f1;
+  cursor: pointer;
+}
+
+
+  .form-group {
+    margin-top: 6%;
+    border: none;
+    border-radius: 10%;
+    box-shadow: gainsboro;
+  }
+
+  .btn-primary {
+    margin-left: 30%;
+    margin-top: 10%;
+    width: 40%;
+    background-color: #1e319d;
+    border: none;
+  }
+
+  .form-control {
+    border: none;
+    box-shadow: 0px 4px 4px 4px #00000014;
+  }
+
+
+  .header {
+    background-color: #1e319d;
+    color: white;
+    border-radius: 0px 0px 10px 10px;
+    padding-top: 2%;
+    padding-bottom: 2%;
+  }
+
+  .uploadimg {
+    background: white;
+    border-radius: 3px;
+    box-shadow: 0px 4px 4px 4px #00000014;
+    text-align: center;
+    font-weight: bold;
+    padding: 5px;
+  }
+
+  .scan {
+    background: white;
+    border-radius: 3px;
+    box-shadow: 0px 4px 4px 4px #00000014;
+    text-align: center;
+    font-weight: bold;
+    padding: 5px;
+  }
+
+  .form-upload input {
+    background: white;
+    border: none;
+    border-radius: 3px;
+    width: 100%;
+    margin-top: 5%;
+    box-shadow: 0px 4px 4px 4px #00000014;
+  }
+
+  #footer1 {
+    bottom: 0%;
+    position: fixed;
+    width: 100%;
+    background: #F1F7FE;
+  }
+
+  /* Style the footer container */
+  .footer {
+    display: flex;
+    box-shadow: 0px 0px 4px 0px;
+    /* Change the background color */
+    justify-content: space-around;
+    padding: 10px 0;
+  }
+  #video-container{
+    display:none;
+    width: 100%;
+    height: 100%;
+  }
+
+#btn-recognize{
+    margin-left: 78%;
+    margin-top: 7%;
+    width: 57%;
+    background-color: #1e319d;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    height: 5vh;
+}
+
+</style>
+
+<body>
+   
+  <header>
+
+    <div class="header">
+      <div class="row" style="width: 100%;">
+        <div class="col-4 ">
+          <img src="{{ url_for('static', filename='images/icons8-menu-48.png') }}" alt="Image Alt Text" style="width: 31%; margin-left: 10%; " id="menuBtn">
+          
+
+
+     
+        </div>
+        <div class="col-4 " style="text-align: center;">
+          <h4>HopeSpot</h4>
+        </div>
+        <div class="col-4 " style="text-align: right;
+                padding: 0;">
+          <img src="{{ url_for('static', filename='images/icons8-bell-48.png') }}" alt="" style="width: 24%;">
+        </div>
+
+      </div>
+    </div>
+  </header>
+   <!-- Side menu -->
+   <div id="sideMenu" class="sidenav">
+    <a href="#">Profile</a>
+    <a href="#">Settings</a>
+    <a href="javascript:void(0)" class="closebtn" id="closeBtn">&times;</a>
+  </div>
+  <div class="container-fluid">
+
+    <div class="brand">
+      <h1>Found Person </h1>
+    </div>
+    <div id="video-container">
+      <video id="video" width="640" height="480" autoplay style=" width: 100%; height: 100%;"></video>
+      <button onclick="captureImage()">Capture Image</button>
+  </div>
+    <div class="row" style="margin-top: 5%;">
+      <div class="col-6">
+        <div class="uploadimg">
+          
+          <img  src="{{ url_for('static', filename='images/addimage.png') }}" alt="Upload Image" id="uploadIcon">
+        <div class="upload-text" style="margin-top:2%;"> Upload Image </div>
+ 
+          <form action="/recognize" method="post" enctype="multipart/form-data" id="imageForm">
+            <input type="file" id="imageFileInput" name="file" accept="image/*" style="display: none;">
+          </div>
+          <button type="submit" id="btn-recognize" class="btn-primary" style="display: none;">Recognize</button>
+          </form>
+
+         
+       
+      </div>
+      <div class="col-6">
+
+        <div class="scan  ">
+            <div class="scan-btn"> 
+            
+          <button onclick="startVideo()"style="background: none; border: none;"> 
+            <img src="{{ url_for('static', filename='images/clientmanagement.png') }}" >
+          </button>
+        </div>
+          <div> Scan </div>
+       
+        </div>
+      </div>
+    </div>
+       
+        
+        <div id="result">{{ result }}</div>
+
+    <form  action="found.php" method="post">
+      
+      <div class="form-group">
+
+        <input name="name" type="text" class="form-control" id="exampleInputName" aria-describedby="nameHelp"
+          placeholder="Name">
+
+      </div>
+
+      <div class="form-group">
+
+        <input name="fname" type="text" class="form-control" id="exampleInputName" aria-describedby="nameHelp"
+          placeholder="Father Name">
+
+      </div>
+
+      <div class="form-group">
+
+        <input name="age" type="number" class="form-control" id="exampleInputName" aria-describedby="nameHelp"
+          placeholder="Age">
+
+      </div>
+
+      <div class="form-group">
+
+        <input name="phonenumber" type="number" class="form-control" id="exampleInputName" aria-describedby="nameHelp"
+          placeholder="Phone Number">
+
+      </div>
+      <div class="form-group">
+
+        <textarea name="moredetail" id="" cols="44" rows="5" placeholder="More Details" style="border: none;
+               box-shadow: 0px 4px 4px 4px #00000014; width: 100%;"></textarea>
+
+      </div>
+
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+
+  </div>
+  
+
+  <footer>
+
+    <div id="footer1">
+
+      <div class="row" id="row" style="width:107%; ">
+
+        <div class="col-12" style="padding: 0%;">
+          <div class="footer">
+            <div class="footer-column">
+
+              <a class="nav-item nav-link " href="http://localhost//FYP/home.php">
+                <img src="{{ url_for('static', filename='images/home.png') }}" alt="">
+              </a>
+
+            </div>
+            <div class="footer-column">
+
+              <a class="nav-item nav-link " href="http://localhost//FYP/newsfeed.html">
+                <img src="{{ url_for('static', filename='images/news.png') }}" alt="">
+              </a>
+
+            </div>
+            <div class="footer-column">
+
+              <a class="nav-item nav-link " href="http://localhost//FYP/feedback.html">
+                <img src="{{ url_for('static', filename='images/comments.png') }}" alt="">
+              </a>
+
+            </div>
+            <div class="footer-column">
+
+              <a class="nav-item nav-link " id="nav-home-tab" data-toggle="tab" href="http://localhost//FYP/profile.html" role="tab"
+                aria-controls="nav-home" aria-selected="true">
+                <img src="{{ url_for('static', filename='images/maleuser.png') }}" alt="">
+              </a>
+
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  
+  <script>
+    
+       document.getElementById('uploadIcon').addEventListener('click', function() {
+        document.getElementById('imageFileInput').click();
+      });
+    
+       
+      document.getElementById('imageFileInput').addEventListener('change', function() {
+        document.querySelector('button[type="submit"]').style.display = 'block';
+      });
+    
+    let video = document.getElementById('video');
+    let videoStream;
+
+    function startVideo() {
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                videoStream = stream;
+                video.srcObject = stream;
+            })
+            .catch(error => console.error('Error accessing camera:', error));
+
+            document.getElementById("video-container").style.display="block";
+    }
+
+    function captureImage() {
+        if (videoStream) {
+            let canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            let context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+ 
+            let dataUrl = canvas.toDataURL('image/png');
+
+            
+            fetch(dataUrl)
+                .then(res => res.blob())
+                .then(blob => {
+                     
+                    let file = new File([blob], 'captured_image.png', { type: 'image/png' });
+
+             
+                    let fileInput = document.getElementById('imageFileInput');
+                    let fileList = new DataTransfer();
+                    fileList.items.add(file);
+                    fileInput.files = fileList.files;
+                })
+                .catch(error => console.error('Error creating file:', error));
+        }
+        document.querySelector('button[type="submit"]').style.display = 'block';
+    }
+
+    function attachEventListeners() {
+      // Open the side menu
+      document.getElementById("menuBtn").addEventListener("click", function () {
+        document.getElementById("sideMenu").style.width = "250px";
+      });
+
+      // Close the side menu
+      document.getElementById("closeBtn").addEventListener("click", function () {
+        document.getElementById("sideMenu").style.width = "0";
+      });
+    }
+</script>
+
+</body>
+
+</html>

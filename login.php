@@ -1,0 +1,139 @@
+<?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+include 'config.php';
+session_start();
+
+$message = array(); // Initialize $message array
+
+if (isset($_POST['submit'])) {
+    // Escaping user inputs to prevent SQL injection
+    $email = mysqli_real_escape_string($conn, $_POST['email']);
+    $pass = mysqli_real_escape_string($conn, md5($_POST['password'])); // Consider using a stronger hashing algorithm than md5
+
+    // Check if email already exists
+    $select = mysqli_query($conn, "SELECT * FROM `user` WHERE email='$email'");
+    if (!$select) {
+        die('Query failed: ' . mysqli_error($conn));
+    }
+    
+    if (mysqli_num_rows($select) > 0) {
+        $row = mysqli_fetch_assoc($select);
+        $_SESSION['user_id'] = $row['id'];
+        var_dump($_SESSION['user_id']); // Debug statement to check $_SESSION['user_id']
+        header('location:home.php');
+        exit; // Add exit to ensure immediate redirection
+    } else {
+        $message[] = 'Incorrect email or password!';
+    }
+}       
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <title>Login</title>
+</head>
+<style>
+body{
+  background-color: #F1F7FE;
+}
+    .brand{
+      margin-top: 25%;
+      text-align: center;
+      color: #1e319d;
+    
+    }
+    .form-group{
+      margin-top: 10%;
+      border: none;
+      border-radius: 10%;
+      box-shadow: gainsboro;
+    }
+    .btn-primary{
+    margin-left: 30%;
+    margin-top: 10%;
+    width: 40%;
+    background-color: #1e319d;
+    border: none;
+    }
+    .form-control{
+      border: none;
+    box-shadow: 0px 4px 4px 4px #00000014;
+    }
+    .form-group label{
+      margin-bottom: 5%;
+    }
+    .icon{
+      margin-left: 24%;
+    display: FLEX;
+    margin-top: 5%;
+    }
+    .subicon{
+      background-color: white;
+    box-shadow: 0px 3px 3px 2px #00000024;
+    border-radius: 10%;
+    margin-left: 10%;
+}
+.social{
+  text-align: center;
+    margin-top: 5%;
+}
+.signup{
+  margin-top: 15%;
+}
+    
+</style>
+<body>
+    <div class="container-fluid">
+        <div class="brand">
+            <h1>HopeSpot</h1>
+        </div>
+        <form method="post" enctype="multipart/form-data">
+  
+    <label for="exampleInputName">Login Account</label>
+    <?php
+    if(isset($message)){
+        foreach($message as $msg){
+            echo '<div class="message">'.$msg.'</div>';
+        }
+    }
+    ?>
+            <div class="form-group">
+                 
+            <input type="email" class="form-control" id="exampleInputusername" aria-describedby="emailHelp" placeholder="Enter Email" name="email" id="email" required>
+                
+              </div>
+            <div class="form-group">
+            
+                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password" name="password">
+            </div>
+            
+            <button type="submit" name="submit" class="btn btn-primary">Login</button>
+          </form>
+          <div class="social">
+            <span>
+              or login with
+            </span>
+            <div class="icon">
+              <div class="subicon"> 
+                <img src="/FYP/images/icons8-google-48.png" alt="" >
+              </div>
+              <div class="subicon">
+                <img src="/FYP/images/icons8-facebook-48.png" alt="">
+              </div>
+
+            </div>
+            <div class="signup">
+            <span>
+             Don't have an account? 
+            </span>
+            <a href="signup.php">signup</a>
+          </div>
+          </div>
+    </div>
+</body>
+</html>
